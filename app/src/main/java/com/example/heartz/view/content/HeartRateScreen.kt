@@ -114,7 +114,6 @@ fun LinearChart(
     data: List<Int>
 ) {
     Canvas(modifier = modifier) {
-        // distance between each x point
         val distance = size.width / (data.size + 1)
         var currentX = 0F
         val maxValue = data.maxOrNull() ?: 0
