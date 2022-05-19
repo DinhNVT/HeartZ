@@ -140,7 +140,7 @@ fun LinearChart(
         } else {
             val cubicPoints1 = mutableListOf<PointF>()
             val cubicPoints2 = mutableListOf<PointF>()
-
+                //git
             for (i in 1 until points.size) {
                 cubicPoints1.add(PointF((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
                 cubicPoints2.add(PointF((points[i].x + points[i - 1].x) / 2, points[i].y))
