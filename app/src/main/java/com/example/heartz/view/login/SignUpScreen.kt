@@ -1,7 +1,7 @@
-package com.example.heartz.view
-
+package com.example.heartz.view.login
 
 import android.graphics.Color.rgb
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,19 +29,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.heartz.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.heartz.navigation.Screen
 
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SignUpScreen(navController: NavHostController, scrollableState: ScrollState = rememberScrollState()) {
+fun SignUpScreen(navController: NavHostController,
+                 scrollableState: ScrollState = rememberScrollState(),
+                 viewModel: LoginScreenViewModel = viewModel()) {
     val textStateFullName = remember { mutableStateOf("") }
     val textStateEmailAddress = remember { mutableStateOf("") }
-    val textStatePhoneNumber = remember { mutableStateOf("") }
     val textStatePassword = remember { mutableStateOf("") }
     val textStatePasswordCallback = remember { mutableStateOf("") }
     val passwordVisible = remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val context = LocalContext.current
 
     Surface(
         modifier = Modifier
@@ -168,52 +173,6 @@ fun SignUpScreen(navController: NavHostController, scrollableState: ScrollState 
             )
 
             OutlinedTextField(
-                value = textStatePhoneNumber.value,
-                onValueChange = { textStatePhoneNumber.value = it },
-                label = {
-                    Text(
-                        "Số điện thoại*",
-                        color = if (textStatePhoneNumber.value.isEmpty()) Color(rgb(255, 121, 121)).copy(alpha = 0.5f)
-                        else Color(rgb(76, 175, 80))
-                    )
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = if (textStatePhoneNumber.value.isEmpty()) Color(
-                        rgb(
-                            255,
-                            121,
-                            121
-                        )
-                    )
-                    else Color(rgb(76, 175, 80)),
-                    unfocusedBorderColor = if (textStatePhoneNumber.value.isEmpty()) Color(
-                        rgb(
-                            38,
-                            198,
-                            218
-                        )
-                    )
-                    else Color(rgb(76, 175, 80))
-                ),
-                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 8.dp),
-                singleLine = true,
-                trailingIcon = {
-                    if (textStatePhoneNumber.value.isNotEmpty()) {
-                        IconButton(onClick = { textStatePhoneNumber.value = "" }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
-            )
-
-            OutlinedTextField(
                 value = textStatePassword.value,
                 onValueChange = { textStatePassword.value = it },
                 label = {
@@ -319,7 +278,50 @@ fun SignUpScreen(navController: NavHostController, scrollableState: ScrollState 
 
             Button(
                 onClick = {
-                    navController.navigate(Screen.Login.route)
+                    if (isValidString(textStateEmailAddress.value)
+                        &&textStatePassword.value.length>=6
+                        &&textStatePasswordCallback.value==textStatePassword.value)
+                    {
+                        viewModel.createUserWithEmailAndPassword(
+                            email = textStateEmailAddress.value,
+                            password = textStatePassword.value,
+                            fullName = textStateFullName.value){
+                                home->
+                            if(!home)
+                            {
+                                Toast.makeText(
+                                    context,
+                                    "Bạn nhập sai thông tin",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else{
+                                Toast.makeText(
+                                    context,
+                                    "Đăng ký thành công",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                navController.navigate(Screen.Login.route)
+                                }
+                            }
+                    }
+                    else{
+                        if(textStatePasswordCallback.value!=textStatePassword.value)
+                        {
+                            Toast.makeText(
+                                context,
+                                "Mật khẩu không khớp",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else{
+                            Toast.makeText(
+                                context,
+                                "Bạn nhập sai thông tin",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 },
                 shape = RoundedCornerShape(50),
                 modifier = Modifier

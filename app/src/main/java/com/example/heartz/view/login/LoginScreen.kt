@@ -1,6 +1,7 @@
-package com.example.heartz.view
+package com.example.heartz.view.login
 
 import android.graphics.Color.rgb
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,15 +30,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.heartz.R
 import com.example.heartz.navigation.Screen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import java.util.regex.Pattern
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Login(scrollableState: ScrollState = rememberScrollState(),
-          navController: NavHostController){
+          navController: NavHostController,
+          viewModel: LoginScreenViewModel = viewModel()
+){
     var textStateUserName = remember { mutableStateOf("") }
     var textStatePassword = remember { mutableStateOf("") }
+
     var passwordVisible  = remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val context = LocalContext.current
 
     Surface(
         modifier = Modifier
@@ -132,16 +141,44 @@ fun Login(scrollableState: ScrollState = rememberScrollState(),
             }
 
             Button(onClick = {
-                navController.navigate(Screen.Main.route){
-                    popUpTo(Screen.Login.route){
-                        inclusive = true
+                if (isValidString(textStateUserName.value)&&textStatePassword.value.length>=6)
+                {
+                    viewModel.signInWithEmailAndPassword(textStateUserName.value, textStatePassword.value){
+                        home->
+                        if(!home)
+                        {
+                            Toast.makeText(
+                                context,
+                                "Sai email hoặc mật khẩu",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else{
+                            Toast.makeText(
+                                context,
+                                "Đăng nhập thành công",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController.navigate(Screen.Main.route){
+                                popUpTo(Screen.Login.route){
+                                    inclusive = true
+                                }
+                            }
+                        }
                     }
+                }
+                else{
+                    Toast.makeText(
+                        context,
+                        "Sai email hoặc mật khẩu",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
                 shape = RoundedCornerShape(50),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(0.dp, 14.dp, 0.dp , 4.dp)
+                    .padding(0.dp, 14.dp, 0.dp, 4.dp)
                     .height(55.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(rgb(38, 198, 218)),
@@ -169,4 +206,18 @@ fun Login(scrollableState: ScrollState = rememberScrollState(),
             }
         }
     }
+}
+
+val EMAIL_ADDRESS_PATTERN = Pattern.compile(
+    "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+            "\\@" +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+            "(" +
+            "\\." +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+            ")+"
+)
+
+fun isValidString(str: String): Boolean{
+    return EMAIL_ADDRESS_PATTERN.matcher(str).matches()
 }

@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.heartz.view.*
+import com.example.heartz.view.login.Login
+import com.example.heartz.view.login.SignUpScreen
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
