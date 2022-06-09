@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "734966023585",
+    "firebase_url": "https://espfirebase-b9634-default-rtdb.firebaseio.com",
+    "project_id": "espfirebase-b9634",
+    "storage_bucket": "espfirebase-b9634.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734966023585:android:2b8ca504cef8985b2a77e0",
+        "android_client_info": {
+          "package_name": "com.example.heartz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734966023585-cj5fqls01sg1o7q8eceomer2svt3b6o3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrzFbYVe_w2NVGjKTY0n6HZjLsX5KPj64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "734966023585-cj5fqls01sg1o7q8eceomer2svt3b6o3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

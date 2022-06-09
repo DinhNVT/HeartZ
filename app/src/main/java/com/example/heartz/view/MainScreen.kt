@@ -32,7 +32,7 @@ import com.example.heartz.view.content.ProfileScreen
 @Composable
 fun MainScreen(){
     var navController = rememberNavController()
-    var title = remember{ mutableStateOf("Home") }
+    var title = remember{ mutableStateOf(NavMain.Home.titleHeader) }
     Scaffold(
         topBar = { TopBar(title = title.value) },
         bottomBar = {
