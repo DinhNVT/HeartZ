@@ -1,18 +1,19 @@
 package com.example.heartz.view.login
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.heartz.model.History
 import com.example.heartz.model.MUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
 
 class LoginScreenViewModel: ViewModel() {
 //     val loadingState = MutableStateFlow(LoadingState.IDLE)
@@ -59,7 +60,7 @@ class LoginScreenViewModel: ViewModel() {
                         createUser(displayName, fullName)
                         home(true)
                     } else {
-                        Log.d("FB", "createUserWithEmailAndPassword: ${task.result.toString()}")
+                        Log.d("FB", "createUserWithEmailAndPassword:")
                         home(false)
                     }
                     _loading.value = false
@@ -70,16 +71,20 @@ class LoginScreenViewModel: ViewModel() {
     private fun createUser(displayName: String?, fullName: String) {
         val userId = auth.currentUser?.uid
 
-        val user = MUser(userId = userId.toString(),
+        val user = MUser(
+            userId = userId.toString(),
             displayName = displayName.toString(),
             avatarUrl = "",
             phone = "",
             fullName = fullName,
             gender = false,
             birth = "",
-            id = null).toMap()
+            id = null,
+            histories = listOf(History(bpm = "123", outcome = "false", time = Timestamp(System.currentTimeMillis())))).toMap()
 
-        FirebaseFirestore.getInstance().collection("users")
-            .add(user)
+        FirebaseFirestore.getInstance().collection("users").document(userId.toString())
+            .set(user)
+            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w("TAG", "Error writing document", e) }
     }
 }

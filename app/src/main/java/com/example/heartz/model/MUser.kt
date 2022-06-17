@@ -1,14 +1,15 @@
 package com.example.heartz.model
 
 data class MUser(
-                 val id: String?,
-                 val fullName: String,
-                 val birth: String,
-                 val gender: Boolean,
-                 val userId: String,
-                 val displayName: String,
-                 val avatarUrl: String,
-                 val phone: String,
+    val id: String?,
+    val fullName: String,
+    val birth: String,
+    val gender: Boolean,
+    val userId: String,
+    val displayName: String,
+    val avatarUrl: String,
+    val phone: String,
+    val histories: List<History>
 ){
     fun toMap(): MutableMap<String, Any> {
         return mutableMapOf(
@@ -18,6 +19,7 @@ data class MUser(
             "birth" to this.birth,
             "avatar_url" to this.avatarUrl,
             "gender" to this.gender,
-            "phone" to this.phone)
+            "phone" to this.phone,
+            "histories" to this.histories)
     }
 }
