@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.heartz.R
 import com.example.heartz.navigation.Screen
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlin.math.PI
 import kotlin.math.cos
@@ -46,8 +47,14 @@ fun AnimatedSplashScreen(navController: NavHostController){
     LaunchedEffect(key1  = true) {
         startAnimation.value = true
         delay( 4000)
-        navController.popBackStack()
-        navController.navigate(Screen.Login.route)
+
+        if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+            navController.popBackStack()
+            navController.navigate(Screen.Login.route)
+        }
+        else {
+            navController.navigate(Screen.Main.route)
+        }
     }
     Splash(alpha = alphaAnim.value)
 }

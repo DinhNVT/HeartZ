@@ -27,9 +27,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.heartz.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun HeartRateScreen(){
+    val auth: FirebaseAuth = Firebase.auth
+    val database: DatabaseReference = Firebase.database.reference
+    val userId = auth.currentUser?.uid
+
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -79,7 +88,11 @@ fun HeartRateScreen(){
             }
 
             Button(
-                onClick = {},
+                onClick = {
+                          //TODO REQUEST
+                    database.child("state").child("do").setValue(1)
+                    database.child("state").child("user_id").setValue(userId)
+                },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
                     .width(100.dp)
@@ -140,7 +153,6 @@ fun LinearChart(
         } else {
             val cubicPoints1 = mutableListOf<PointF>()
             val cubicPoints2 = mutableListOf<PointF>()
-                //git git 2
             for (i in 1 until points.size) {
                 cubicPoints1.add(PointF((points[i].x + points[i - 1].x) / 2, points[i - 1].y))
                 cubicPoints2.add(PointF((points[i].x + points[i - 1].x) / 2, points[i].y))

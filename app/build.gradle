@@ -55,6 +55,9 @@ dependencies {
     //firebase auth and firestore
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
     //Dagger - Hilt
     implementation 'com.google.dagger:hilt-android:2.39'

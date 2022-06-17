@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,7 +31,7 @@ import com.example.heartz.view.content.HomeScreen
 import com.example.heartz.view.content.ProfileScreen
 
 @Composable
-fun MainScreen(){
+fun MainScreen(navControllerMain: NavHostController){
     var navController = rememberNavController()
     var title = remember{ mutableStateOf(NavMain.Home.titleHeader) }
     Scaffold(
@@ -40,12 +41,12 @@ fun MainScreen(){
                     newTitle->title.value = newTitle
             }}
     ) {
-        Navigation(navController = navController)
+        Navigation(navController = navController, navControllerMain=navControllerMain)
     }
 }
 
 @Composable
-fun Navigation( navController: NavHostController){
+fun Navigation( navController: NavHostController, navControllerMain: NavHostController){
     NavHost(
         navController = navController,
         startDestination = NavMain.Home.route){
@@ -63,7 +64,7 @@ fun Navigation( navController: NavHostController){
         }
 
         composable(route = NavMain.Profile.route) {
-            ProfileScreen(navController = navController)
+            ProfileScreen(navController = navController, navControllerMain = navControllerMain)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.heartz.view.content
 
 import android.graphics.Color.rgb
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -31,17 +33,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.heartz.R
+import com.example.heartz.navigation.NavMain
 import com.example.heartz.navigation.Screen
+import com.firebase.ui.auth.AuthUI
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileScreen(scrollableState: ScrollState = rememberScrollState(),
-          navController: NavHostController) {
+          navController: NavHostController,
+navControllerMain: NavHostController) {
     var textStateUserName = remember { mutableStateOf("") }
     var textStatePassword = remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val context = LocalContext.current
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -77,11 +83,16 @@ fun ProfileScreen(scrollableState: ScrollState = rememberScrollState(),
 
             Button(
                 onClick = {
-//                    navController.navigate(Screen.Main.route) {
-//                        popUpTo(Screen.Login.route) {
-//                            inclusive = true
-//                        }
-//                    }
+                    AuthUI.getInstance()
+                        .signOut(context)
+                        .addOnCompleteListener {
+                            Toast.makeText(context, "Bạn đã đăng xuất", Toast.LENGTH_SHORT)
+                            navControllerMain.navigate(Screen.Login.route) {
+                                popUpTo(Screen.Main.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                 },
                 shape = RoundedCornerShape(20),
                 modifier = Modifier
