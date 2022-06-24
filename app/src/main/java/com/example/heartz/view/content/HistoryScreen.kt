@@ -155,13 +155,13 @@ private fun StatusItem(
 
             Row(horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()) {
-                Text(text = if(outcome=="true"){ "Bình thường"} else {"Không bình thường"})
+                Text(text = if(outcome!="true"){ "Bình thường"} else {"Không bình thường"})
                 Spacer(modifier = Modifier.width(10.dp))
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_circle_24),
                     contentDescription = "",
                     tint = Color(
-                        if(outcome=="true"){ rgb(16,225,87,)}
+                        if(outcome!="true"){ rgb(16,225,87,)}
                         else {rgb(239,83,80)})
                 )
             }
@@ -207,6 +207,12 @@ fun listHistoriesDetail(listHistories: List<String>): List<HistoryDetails>{
                 date = str.split(", ")[0]
                 hour = str.split(", ")[1]
             }
+
+            if(bpm.indexOf(".")!=-1&&bpm.length>=3)
+            {
+                bpm = bpm.split(".")[0]
+            }
+
             val historyDetails: HistoryDetails
                     = HistoryDetails(
                 bpm = bpm,
@@ -215,7 +221,7 @@ fun listHistoriesDetail(listHistories: List<String>): List<HistoryDetails>{
                 hour = hour,
                 time = Integer.parseInt(arrList[0])
             )
-            if(bpm.length<=4)
+            if(bpm.length<=15)
             arrListHistories.add(historyDetails)
         }
 
