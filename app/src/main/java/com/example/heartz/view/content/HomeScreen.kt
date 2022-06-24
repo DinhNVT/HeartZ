@@ -18,27 +18,60 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.heartz.R
 
 @Composable
-fun HomeScreen(){
-    val listImage = listOf<Int>(1, 2, 3, 4, 5, 4, 3, 2, 5)
+fun HomeScreen(navController: NavController){
+    //val listImage = listOf<Int>(1, 2, 3, 4, 5, 4, 3, 2, 5)
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
-        color = Color(rgb(38, 180, 180)),
+            .fillMaxHeight()
+            .padding(horizontal = 16.dp)
+            .padding(top = 30.dp),
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(bottom = 60.dp)
-        ){
-            items(listImage) { image ->
-                NewspaperItem(image)
-            }
+//        LazyColumn(
+//            modifier = Modifier.padding(bottom = 60.dp)
+//        ){
+//            items(listImage) { image ->
+//                NewspaperItem(image)
+//            }
+//        }
+        Intro()
+    }
+}
+
+@Composable
+fun Intro(){
+    Surface() {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Đo nhịp tim",
+            fontSize = 64.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(rgb(38, 198, 218)),
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = "Hãy đo nhịp tim của bạn thường xuyên để kiểm tra tình hình sức khỏe",
+            fontSize = 16.sp,
+            color = Color(rgb(38, 198, 218)))
+
+            Image(
+                painterResource(R.drawable.heart_beat),
+                contentDescription = "",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(400.dp)
+                    .width(300.dp)
+            )
         }
     }
 }

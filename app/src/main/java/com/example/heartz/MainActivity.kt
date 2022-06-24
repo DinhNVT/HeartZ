@@ -6,10 +6,14 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
+import com.example.heartz.model.MUser
 import com.example.heartz.navigation.SetupNavGraph
 import com.example.heartz.ui.theme.HeartZTheme
+import com.example.heartz.viewmodel.ProfileViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

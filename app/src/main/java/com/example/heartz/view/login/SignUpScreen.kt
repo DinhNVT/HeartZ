@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import com.example.heartz.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.heartz.navigation.Screen
+import com.example.heartz.viewmodel.LoginScreenViewModel
 
 @ExperimentalComposeUiApi
 @OptIn(ExperimentalComposeUiApi::class)

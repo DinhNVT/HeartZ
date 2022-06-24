@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -25,10 +26,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.heartz.navigation.NavMain
 import com.example.heartz.R
 import com.example.heartz.navigation.Screen
-import com.example.heartz.view.content.HeartRateScreen
-import com.example.heartz.view.content.HistoryScreen
-import com.example.heartz.view.content.HomeScreen
-import com.example.heartz.view.content.ProfileScreen
+import com.example.heartz.viewmodel.ProfileViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.heartz.view.content.*
 
 @Composable
 fun MainScreen(navControllerMain: NavHostController){
@@ -45,6 +45,7 @@ fun MainScreen(navControllerMain: NavHostController){
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Navigation( navController: NavHostController, navControllerMain: NavHostController){
     NavHost(
@@ -52,7 +53,7 @@ fun Navigation( navController: NavHostController, navControllerMain: NavHostCont
         startDestination = NavMain.Home.route){
 
         composable(route = NavMain.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
 
         composable(route = NavMain.HeartRate.route) {
@@ -64,7 +65,16 @@ fun Navigation( navController: NavHostController, navControllerMain: NavHostCont
         }
 
         composable(route = NavMain.Profile.route) {
-            ProfileScreen(navController = navController, navControllerMain = navControllerMain)
+            ProfileScreen(navControllerMain = navControllerMain,
+            navController = navController)
+        }
+
+        composable(route = NavMain.ChangeProfile.route){
+            ChangeProfileScreen(navController = navController)
+        }
+
+        composable(route = NavMain.ChangePassword.route){
+            ChangePassword(navController = navController)
         }
     }
 }
@@ -76,7 +86,8 @@ fun TopBar(title: String){
         backgroundColor =Color(rgb(38, 198, 218))
     ){
         Text(text = title, fontSize = 20.sp,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(16.dp, 0.dp)) }
 }
 
@@ -113,9 +124,11 @@ fun BottomNavigation(navController: NavHostController, TopTitle: (String) -> Uni
                     }
                 },
                 icon = {
-                    Icon(painter = painterResource(id = item.icon),
-                    contentDescription = item.title,
-                    modifier = Modifier.size(25.dp))
+                    item.icon?.let { painterResource(id = it) }?.let {
+                        Icon(painter = it,
+                            contentDescription = item.title,
+                            modifier = Modifier.size(25.dp))
+                    }
                 },
                 label = {Text(text = item.title)},
                 selectedContentColor = Color(rgb(38, 198, 218)),

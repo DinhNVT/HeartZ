@@ -1,5 +1,6 @@
 package com.example.heartz.model
 
+import androidx.compose.runtime.MutableState
 import com.google.firebase.firestore.FieldValue
 import java.sql.Date
 import java.sql.Timestamp
@@ -17,5 +18,13 @@ data class History(
             "outcome" to this.outcome,
             "time" to this.time,
             )
+    }
+
+    fun getHistory(): History {
+        return History(
+            this.bpm,
+            this.outcome,
+            this.time
+        )
     }
 }

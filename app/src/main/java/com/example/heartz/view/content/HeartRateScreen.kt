@@ -1,15 +1,10 @@
 package com.example.heartz.view.content
 
 import android.graphics.PointF
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,89 +27,159 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import android.graphics.Color.rgb
+import android.util.Log
+import androidx.compose.foundation.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.heartz.model.History
+import com.example.heartz.model.MUser
+import com.example.heartz.viewmodel.StatusViewModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.heartz.LoadingAnimation
 
 @Composable
-fun HeartRateScreen(){
-    val auth: FirebaseAuth = Firebase.auth
-    val database: DatabaseReference = Firebase.database.reference
-    val userId = auth.currentUser?.uid
-
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                contentAlignment= Alignment.Center,
-                modifier = Modifier
-                    .padding(0.dp, 16.dp)
-                    .size(200.dp)
-                    .border(
-                        BorderStroke(
-                            25.dp,
-                            color = colorResource(id = R.color.main_color)
-                        ),
-                        shape = CircleShape
-                    )
-                    .clip(shape = CircleShape)
-                    .background(Color.White, shape = CircleShape)
-            )
-            {
-                Column() {
-                    Text(
-                        text = "78",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 50.sp,
-                            fontWeight = FontWeight.Bold,
-
-                        ),
-                        color = Color.Black,
-                        modifier = Modifier
-                            .defaultMinSize(24.dp)
-                    )
-                    Text(
-                        text ="BPM",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 30.sp,
-                            ),
-                        color = Color.Black,
-                        modifier = Modifier
-                            .defaultMinSize(24.dp)
-                    )
-                }
-            }
-
-            Button(
-                onClick = {
-                          //TODO REQUEST
-                    database.child("state").child("do").setValue(1)
-                    database.child("state").child("user_id").setValue(userId)
-                },
-                shape = RoundedCornerShape(20),
-                modifier = Modifier
-                    .width(100.dp)
-                    .padding(0.dp, 20.dp, 0.dp, 4.dp)
-                    .height(40.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(android.graphics.Color.rgb(38, 198, 218)),
-                    contentColor = Color.White
-                ),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_play_circle_outline_24),
-                    contentDescription = "Play",
-                    modifier = Modifier.size(140.dp)
-                )
-            }
-
-            LinearChartApplication()
-        }
+fun HeartRateScreen(viewModel: StatusViewModel = viewModel()){
+    val listECGNew: Int? by viewModel.status.observeAsState()
+    if (listECGNew!=null){
+        HeartMainContent(listECGNew)
+    }
+    else{
+        LoadingAnimation()
     }
 }
+ @Composable
+ fun HeartMainContent(listECGNew: Int?){
+     val auth: FirebaseAuth = Firebase.auth
+     val database: DatabaseReference = Firebase.database.reference
+     val userId = auth.currentUser?.uid
 
+     Surface(
+         modifier = Modifier
+             .fillMaxSize()
+             .padding(vertical = 16.dp)
+     ) {
+         Column(
+             horizontalAlignment = Alignment.CenterHorizontally,
+         ) {
+             Log.d("TAG", listECGNew.toString())
+//            Box(
+//                contentAlignment= Alignment.Center,
+//                modifier = Modifier
+//                    .padding(0.dp, 16.dp)
+//                    .size(200.dp)
+//                    .border(
+//                        BorderStroke(
+//                            25.dp,
+//                            color = colorResource(id = R.color.main_color)
+//                        ),
+//                        shape = CircleShape
+//                    )
+//                    .clip(shape = CircleShape)
+//                    .background(Color.White, shape = CircleShape)
+//            )
+//            {
+//                Column() {
+//                    Text(
+//                        text = "78",
+//                        textAlign = TextAlign.Center,
+//                        style = TextStyle(
+//                            fontSize = 50.sp,
+//                            fontWeight = FontWeight.Bold,
+//                        ),
+//                        color = Color(rgb(38, 198, 218)),
+//                        modifier = Modifier
+//                            .defaultMinSize(24.dp)
+//                    )
+//                    Text(
+//                        text ="BPM",
+//                        textAlign = TextAlign.Center,
+//                        style = TextStyle(
+//                            fontSize = 30.sp,
+//                            ),
+//                        color = Color(rgb(173,53,1)),
+//                        modifier = Modifier
+//                            .defaultMinSize(24.dp)
+//                    )
+//                }
+//            }
+
+             if (listECGNew == 1)
+             {
+                 Text(text =  "Đang đo...",
+                     fontSize = 24.sp,
+                     fontWeight = FontWeight.Bold,
+                     modifier = Modifier
+                         .fillMaxWidth(),
+                     textAlign = TextAlign.Center,
+                     color = Color(rgb(38, 198, 218))
+                 )
+             }
+             else if(listECGNew==0) {
+                 Text(text =  "Đang không đo",
+                     fontSize = 24.sp,
+                     fontWeight = FontWeight.Bold,
+                     modifier = Modifier
+                         .fillMaxWidth(),
+                     textAlign = TextAlign.Center,
+                     color = Color(rgb(38, 198, 218))
+                 )
+             }
+
+             Image(
+                 painterResource(R.drawable.heart_beat),
+                 contentDescription = "",
+                 contentScale = ContentScale.Fit,
+                 modifier = Modifier
+                     .height(300.dp)
+                     .width(200.dp)
+             )
+
+             Spacer(modifier = Modifier.height(150.dp))
+
+             Button(
+                 onClick = {
+                     database.child("state").child("do").setValue(1)
+                     database.child("state").child("user_id").setValue(userId.toString())
+                 },
+                 shape = RoundedCornerShape(20),
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(10.dp, 20.dp, 10.dp, 4.dp)
+                     .height(50.dp),
+                 colors = ButtonDefaults.buttonColors(
+                     backgroundColor = Color(rgb(38, 198, 218)),
+                     contentColor = Color.White
+                 ),
+             ) {
+                 Icon(
+                     painter = painterResource(id = R.drawable.ic_baseline_play_circle_outline_24),
+                     contentDescription = "Play",
+                 )
+                 Spacer(modifier = Modifier.width(8.dp))
+                 Text(text = "Bắt đầu đo",
+                     fontSize = 24.sp)
+             }
+//            listECGNew?.let { LinearChartApplication(it,listEcg) }
+         }
+     }
+ }
+fun listt(ecg: Int, list: MutableList<Int>): MutableList<Int> {
+    val listtt: MutableList<Int> = list
+    for(j in listtt.indices){
+            if(j!=listtt.size-1)
+                listtt[j] = listtt[j+1]
+            else
+                listtt[listtt.size-1] = ecg
+        }
+    return listtt
+}
 sealed class LinearChartStyle {
     object Default : LinearChartStyle()
     object Smooth : LinearChartStyle()
@@ -172,13 +237,15 @@ fun LinearChart(
                 )
             }
 
-            drawPath(path, color = Color(android.graphics.Color.rgb(38, 198, 218)), style = Stroke(width = 8f))
+            drawPath(path, color = Color(rgb(38, 198, 218)), style = Stroke(width = 8f))
         }
     }
 }
 
 @Composable
-fun LinearChartApplication() {
+fun LinearChartApplication(ecg:Int, list: MutableList<Int>) {
+    var lists:MutableList<Int> = list
+    lists = listt(ecg, list)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -193,7 +260,7 @@ fun LinearChartApplication() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                data = provideMockData(),
+                data = lists,
                 style = LinearChartStyle.Smooth
             )
         }
@@ -204,4 +271,10 @@ private fun provideMockData() = listOf(
     5929, 6898, 8961, 5674, 7122, 6592, 3427, 5520, 4680, 7418,
     4743, 4080, 3611, 7295, 9900, 12438, 11186, 5439, 4227, 5138,
     11115, 8386, 12450, 10411, 10852, 7782, 7371, 4983, 9234, 6847
+)
+
+private fun dataOne() = listOf(
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 )
