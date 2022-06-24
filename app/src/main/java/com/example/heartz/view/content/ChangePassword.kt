@@ -1,20 +1,13 @@
-package com.example.heartz.view
-
+package com.example.heartz.view.content
 
 import android.graphics.Color.rgb
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,21 +19,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.heartz.R
 import com.example.heartz.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
-import java.util.regex.Pattern
-
 
 @ExperimentalComposeUiApi
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ForgetPasswordScreen(navController: NavHostController, scrollableState: ScrollState = rememberScrollState()) {
-    val textStateEmailAddress = remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
+fun ChangePassword(navController: NavController, scrollableState: ScrollState = rememberScrollState()) {
     val context = LocalContext.current
-    val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     Surface(
         modifier = Modifier
@@ -86,7 +74,7 @@ fun ForgetPasswordScreen(navController: NavHostController, scrollableState: Scro
             }
 
             Text(
-                text = "Quên mật khẩu",
+                text = "Đổi mật khẩu",
                 style = MaterialTheme.typography.h5,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -94,7 +82,7 @@ fun ForgetPasswordScreen(navController: NavHostController, scrollableState: Scro
                     .align(Alignment.Start)
             )
             Text(
-                text = "Vui lòng nhập email  của bạn để xác minh việc đặt lại mật khẩu",
+                text = "Vui lòng xem mail hoặc thư rác trong email của bạn",
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
                 modifier = Modifier
@@ -103,64 +91,12 @@ fun ForgetPasswordScreen(navController: NavHostController, scrollableState: Scro
                 color = Color.LightGray
             )
 
-            OutlinedTextField(
-                value = textStateEmailAddress.value,
-                onValueChange = { textStateEmailAddress.value = it },
-                label = {
-                    Text(
-                        "Địa chỉ email*",
-                        color = if (textStateEmailAddress.value.isEmpty()) Color(rgb(255, 121, 121)).copy(alpha = 0.5f)
-                        else Color(rgb(76, 175, 80))
-                    )
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = if (textStateEmailAddress.value.isEmpty()) Color(
-                        rgb(
-                            255,
-                            121,
-                            121
-                        )
-                    )
-                    else Color(rgb(76, 175, 80)),
-                    unfocusedBorderColor = if (textStateEmailAddress.value.isEmpty()) Color(
-                        rgb(
-                            38,
-                            198,
-                            218
-                        )
-                    )
-                    else Color(rgb(76, 175, 80))
-                ),
-                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 8.dp),
-                singleLine = true,
-                trailingIcon = {
-                    if (textStateEmailAddress.value.isNotEmpty()) {
-                        IconButton(onClick = { textStateEmailAddress.value = "" }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
-            )
-
             Button(
                 onClick = {
-                    if (textStateEmailAddress.value==""|| !isValidString(textStateEmailAddress.value)
-                    ) {
-                        Toast.makeText(context, "Enter your registered email id", Toast.LENGTH_SHORT).show();
-                        return@Button
-                    }
-
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(textStateEmailAddress.value)
+                    FirebaseAuth.getInstance().sendPasswordResetEmail( FirebaseAuth.getInstance().currentUser?.email.toString())
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                navController.navigate(Screen.Login.route)
+                                navController.popBackStack()
                                 Toast.makeText(
                                     context,
                                     "Chúng tôi đã gửi cho bạn email về cập nhật lại mật khẩu",
@@ -194,18 +130,4 @@ fun ForgetPasswordScreen(navController: NavHostController, scrollableState: Scro
             }
         }
     }
-}
-
-val EMAIL_ADDRESS_PATTERN = Pattern.compile(
-    "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
-            "\\@" +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
-            "(" +
-            "\\." +
-            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
-            ")+"
-)
-
-fun isValidString(str: String): Boolean{
-    return EMAIL_ADDRESS_PATTERN.matcher(str).matches()
 }

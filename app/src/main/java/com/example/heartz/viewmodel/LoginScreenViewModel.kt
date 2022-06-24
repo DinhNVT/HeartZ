@@ -1,4 +1,4 @@
-package com.example.heartz.view.login
+package com.example.heartz.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,7 +9,6 @@ import com.example.heartz.model.History
 import com.example.heartz.model.MUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -80,7 +79,7 @@ class LoginScreenViewModel: ViewModel() {
             gender = false,
             birth = "",
             id = null,
-            histories = listOf(History(bpm = "123", outcome = "false", time = Timestamp(System.currentTimeMillis())))).toMap()
+            histories = emptyList()).toMap()
 
         FirebaseFirestore.getInstance().collection("users").document(userId.toString())
             .set(user)
